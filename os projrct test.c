@@ -1,11 +1,11 @@
 #include <stdio.h>
-#define MAX_QUEUE_SIZE 100
-typedef struct Processes {
+#define SIZE 100
+typedef struct Prs {
 	int p_no;
 	int arr_time;
 	int burst_time;
-} Process;
-Process * queue[MAX_QUEUE_SIZE];
+} Prs;
+Prs * queue[MAX_QUEUE_SIZE];
 int front = 0, rear = -1, processed = 0, curr_time = 0, tq = 6;
 int last_front = 0, last_rear = -1;
 void swap(Process * a, Process * b) {
@@ -30,7 +30,7 @@ void sort(Process p[], int n) {
 			break;
 	}
 }
-void enqueue(Process p[], int n) {
+void enqueue(Pss p[], int n) {
 	int i, j, can_insert;
 	for (i = 0; i < n; ++i)
 	{
@@ -56,34 +56,6 @@ void enqueue(Process p[], int n) {
 	{
 		if (queue[i]->burst_time > 0)
 			queue[++rear] = queue[i];
-	}
-}
-void execute() {
-	int i;
-	
-	if (front-1 == rear) {
-		printf("CPU idle for 1 second.\n");
-		curr_time += 1;
-	}
-	else {
-		last_front = front;
-		last_rear = rear;		
-		for (i = front; i <= rear; ++i, ++front)
-		{
-			if (queue[i]->burst_time > tq)
-			{
-				queue[i]->burst_time -= tq;
-				curr_time += tq;
-				printf("Process number %d excuted till %d seconds.\n", queue[i]->p_no, curr_time);
-			}
-			else if (queue[i]->burst_time > 0)
-			{
-				curr_time += queue[i]->burst_time;
-				queue[i]->burst_time = 0;
-				printf("Process number %d excuted till %d seconds.\n", queue[i]->p_no, curr_time);
-				++processed;
-			}
-		}
 	}
 }
 int main() {
