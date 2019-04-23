@@ -13,6 +13,69 @@ typedef struct Processes {
 Prs * queue[SIZE];
 int front = 0, rear = -1, processed = 0, curr_time = 0, tq = 6;
 int last_front = 0, last_rear = -1;
+
+int main() {
+	
+	HANDLE hConsole;
+	hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+	SetConsoleTextAttribute(hConsole,11);
+	
+	printf("\t\t\t\t\t\tSCHEDULER");
+	printf("\n\t\t==========================================================================================\n");
+	
+	
+	
+	int sum_wait = 0, sum_turn = 0;
+	int n, i;
+	short err_flag = 0;	
+	do {
+		if (err_flag == 1)
+			fprintf(stderr, "\nNumber of processes should be greater than 1.\n");
+		printf("Enter the number of processes: ");
+		scanf("%d", &n);
+		
+		err_flag = 1;
+	} while (n < 1);
+	err_flag = 0;
+	Prs p[n];
+	for (i = 0; i < n; ++i) {
+		printf("\n");
+		printf("Enter arrival time of process %d: ", i+1);
+		scanf("%d", &p[i].arr_time);
+		printf("Enter burst time of process %d: ", i+1);
+		scanf("%d", &p[i].burst_time);
+		p[i].bt = p[i].burst_time;
+		p[i].p_no = i+1;
+	}
+	sort(&p[0], n); // Sort the processes according to the arrival time of each process.	
+	while (1) {
+		enqueue(p, n);
+		printf("\nIn queue: ");
+		for (i = 0; i <= rear; ++i) {
+			printf("%d ", queue[i]->p_no);
+		}
+		printf("\nFront = %d, Rear = %d.\n\n", front, rear);
+		execute();
+		// If all the processes have been processed, break from the loop.
+		if (processed == n)
+			break;
+	}
+	printf(" =========================================================================================================");
+	printf("\n |   Process no.     |    Arrival Time    |    Burst Time    |    Turnaround Time   |    Waiting Time    |\n");
+	
+	for(i = 0; i < n; i++)
+	{
+		printf(" |         %d         |         %d          |        %d         |          %d           |         %d          |\n",queue[i]->p_no,queue[i]->arr_time,queue[i]->bt,queue[i]->turn_time,queue[i]->wait_time);
+		sum_wait += queue[i]->wait_time;
+		sum_turn += queue[i]->turn_time;
+	}
+    printf(" =========================================================================================================");
+		
+	printf("\nAverage Turnaround time: %f",(float)sum_turn/n);
+	printf("\nAverage Waiting time: %f",(float)sum_wait/n);
+	printf("\n =========================================================================================================");
+	return 0;
+}
 void enqueue(Prs p[], int n) {
 	int i, j, can_insert;
 	for (i = 0; i < n; ++i)
@@ -100,65 +163,4 @@ void execute() {
 		}
 	}
 }
-int main() {
-	
-	HANDLE hConsole;
-	hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
-	SetConsoleTextAttribute(hConsole,11);
-	
-	printf("\t\t\t\t\t\tSCHEDULER");
-	printf("\n\t\t==========================================================================================\n");
-	
-	
-	
-	int sum_wait = 0, sum_turn = 0;
-	int n, i;
-	short err_flag = 0;	
-	do {
-		if (err_flag == 1)
-			fprintf(stderr, "\nNumber of processes should be greater than 1.\n");
-		printf("Enter the number of processes: ");
-		scanf("%d", &n);
-		
-		err_flag = 1;
-	} while (n < 1);
-	err_flag = 0;
-	Prs p[n];
-	for (i = 0; i < n; ++i) {
-		printf("\n");
-		printf("Enter arrival time of process %d: ", i+1);
-		scanf("%d", &p[i].arr_time);
-		printf("Enter burst time of process %d: ", i+1);
-		scanf("%d", &p[i].burst_time);
-		p[i].bt = p[i].burst_time;
-		p[i].p_no = i+1;
-	}
-	sort(&p[0], n); // Sort the processes according to the arrival time of each process.	
-	while (1) {
-		enqueue(p, n);
-		printf("\nIn queue: ");
-		for (i = 0; i <= rear; ++i) {
-			printf("%d ", queue[i]->p_no);
-		}
-		printf("\nFront = %d, Rear = %d.\n\n", front, rear);
-		execute();
-		// If all the processes have been processed, break from the loop.
-		if (processed == n)
-			break;
-	}
-	printf(" =========================================================================================================");
-	printf("\n |   Process no.     |    Arrival Time    |    Burst Time    |    Turnaround Time   |    Waiting Time    |\n");
-	
-	for(i = 0; i < n; i++)
-	{
-		printf(" |         %d         |         %d          |        %d         |          %d           |         %d          |\n",queue[i]->p_no,queue[i]->arr_time,queue[i]->bt,queue[i]->turn_time,queue[i]->wait_time);
-		sum_wait += queue[i]->wait_time;
-		sum_turn += queue[i]->turn_time;
-	}
-    printf(" =========================================================================================================");
-		
-	printf("\nAverage Turnaround time: %f",(float)sum_turn/n);
-	printf("\nAverage Waiting time: %f",(float)sum_wait/n);
-	printf("\n =========================================================================================================");
-	return 0;
-}
+
